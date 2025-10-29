@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Optional, List, Dict
@@ -59,10 +59,14 @@ class ChatRequest(BaseModel):
 
 
 @router.get("/status", response_model=OllamaStatusResponse)
-def get_ollama_status(url: str = "http://localhost:11434"):
+def get_ollama_status(url: Optional[str] = Query(None, description="Ollama API URL")):
     """Check if Ollama is available and get list of models"""
-    available = check_ollama_available(url)
-    models = get_ollama_models(url) if available else []
+    # Use provided URL or default
+    ollama_url = url or "http://localhost:11434"
+    
+    print(f"[AI Status] Checking Ollama at {ollama_url}")
+    available = check_ollama_available(ollama_url)
+    models = get_ollama_models(ollama_url) if available else []
     
     return {
         "available": available,

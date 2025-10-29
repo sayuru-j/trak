@@ -5,7 +5,7 @@ import { X, Send, Loader2, Sparkles, User, Bot } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { useToast } from "@/hooks/use-toast";
 
-const API_URL = window.api?.apiUrl || "http://127.0.0.1:8000";
+const API_URL = window.api?.apiUrl || "http://127.0.0.1:8765";
 
 interface Message {
   id: string;

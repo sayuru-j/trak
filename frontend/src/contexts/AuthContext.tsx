@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-const API_URL = window.api?.apiUrl || "http://127.0.0.1:8000";
+const API_URL = window.api?.apiUrl || "http://127.0.0.1:8765";
 
 interface User {
   id: number;

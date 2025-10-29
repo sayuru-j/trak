@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Sparkles, Loader2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const API_URL = window.api?.apiUrl || "http://127.0.0.1:8000";
+const API_URL = window.api?.apiUrl || "http://127.0.0.1:8765";
 
 interface Task {
   id: number;

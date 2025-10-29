@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
-const API_URL = window.api?.apiUrl || "http://127.0.0.1:8000";
+const API_URL = window.api?.apiUrl || "http://127.0.0.1:8765";
 
 interface SignupProps {
   onSignupSuccess: (user: { id: number; username: string; email?: string }) => void;

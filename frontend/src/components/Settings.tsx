@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useStore } from "@/store/useStore";
 
-const API_URL = window.api?.apiUrl || "http://127.0.0.1:8000";
+const API_URL = window.api?.apiUrl || "http://127.0.0.1:8765";
 
 interface OllamaModel {
   name: string;
@@ -43,8 +43,14 @@ const Settings = () => {
 
   useEffect(() => {
     loadSettings();
-    checkOllamaStatus();
   }, []);
+
+  // Check Ollama status after settings are loaded or when URL changes
+  useEffect(() => {
+    if (!loading && settings.ollama_url) {
+      checkOllamaStatus();
+    }
+  }, [settings.ollama_url, loading]);
 
   const loadSettings = async () => {
     await fetchSettings();
@@ -52,15 +58,28 @@ const Settings = () => {
   };
 
   const checkOllamaStatus = async () => {
+    const ollamaUrl = settings.ollama_url || "http://localhost:11434";
     try {
-      const response = await fetch(`${API_URL}/ai/status`);
+      const url = new URL(`${API_URL}/ai/status`);
+      url.searchParams.set('url', ollamaUrl);
+      
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
       const data = await response.json();
       
       setOllamaAvailable(data.available);
       setOllamaModels(data.models || []);
+      
+      if (!data.available) {
+        console.warn(`[Ollama] Not available at ${ollamaUrl}. Make sure Ollama is running.`);
+      }
     } catch (error) {
-      console.error("Failed to check Ollama status:", error);
+      console.error(`[Ollama] Failed to check status at ${ollamaUrl}:`, error);
       setOllamaAvailable(false);
+      setOllamaModels([]);
     }
   };
 

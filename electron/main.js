@@ -8,12 +8,18 @@ let tray;
 let fastApiProcess;
 
 function createWindow() {
+  // Determine icon path for development vs production
+  const iconPath = app.isPackaged
+    ? path.join(process.resourcesPath, 'build', 'icon.png')
+    : path.join(__dirname, '..', 'build', 'icon.png');
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     frame: false,  // Remove default title bar
     backgroundColor: '#fafafa', // Matches light theme background
     show: false, // Don't show until ready
+    icon: iconPath, // Set window icon
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

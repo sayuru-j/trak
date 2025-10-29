@@ -4,7 +4,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld('api', {
   // API endpoint URL
-  apiUrl: 'http://127.0.0.1:8000',
+  apiUrl: 'http://127.0.0.1:8765',
   
   // Window controls
   windowMinimize: () => ipcRenderer.send('window-minimize'),

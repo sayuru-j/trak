@@ -71,7 +71,7 @@ When users first run the app, they may see:
 - Windows will trust it immediately
 
 ### Firewall Prompts
-Users may see a firewall prompt for the FastAPI backend (port 8000).
+Users may see a firewall prompt for the FastAPI backend (port 8765).
 - This is normal
 - Click "Allow access"
 
@@ -176,8 +176,8 @@ Your built app contains:
 - Download from: https://www.python.org/downloads/
 - Check "Add Python to PATH" during installation
 
-### Issue: "Port 8000 already in use"
-**Solution:** Close other apps using port 8000, or change port in `backend/main.py`
+### Issue: "Port 8765 already in use"
+**Solution:** Close other apps using port 8765, or change port in `backend/main.py`
 
 ### Issue: Database errors
 **Solution:** Delete `trak.db` and restart the app (fresh database)

@@ -89,7 +89,7 @@ trak/
 
 Once the app starts:
 1. The Electron window will open with custom title bar
-2. The FastAPI backend runs on `http://127.0.0.1:8000`
+2. The FastAPI backend runs on `http://127.0.0.1:8765`
 3. The Vite dev server runs on `http://localhost:5173`
 4. Navigate between Today, Timeline, and Analytics tabs
 

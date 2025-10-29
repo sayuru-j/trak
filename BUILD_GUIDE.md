@@ -106,12 +106,12 @@ If you want to deploy without building:
 
 ### Backend Configuration
 
-The backend runs on `http://127.0.0.1:8000` by default.
+The backend runs on `http://127.0.0.1:8765` by default.
 
 To change the port, edit `backend/main.py`:
 ```python
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8765)
 ```
 
 ### Frontend Configuration
@@ -174,7 +174,7 @@ npm install --save-dev electron-builder
 ### Runtime Issues
 
 **Issue**: Backend doesn't start
-- Check if port 8000 is available
+- Check if port 8765 is available
 - Check Python dependencies: `pip install -r backend/requirements.txt`
 
 **Issue**: Database errors

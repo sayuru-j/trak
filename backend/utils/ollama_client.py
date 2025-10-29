@@ -5,9 +5,24 @@ from typing import Optional, List, Dict
 def check_ollama_available(url: str = "http://localhost:11434") -> bool:
     """Check if Ollama is running and available"""
     try:
-        response = requests.get(f"{url}/api/tags", timeout=2)
-        return response.status_code == 200
-    except:
+        response = requests.get(f"{url}/api/tags", timeout=5)
+        if response.status_code == 200:
+            print(f"[Ollama] Successfully connected to {url}")
+            return True
+        else:
+            print(f"[Ollama] Connection failed: HTTP {response.status_code} from {url}")
+            return False
+    except requests.exceptions.ConnectionError as e:
+        print(f"[Ollama] Connection error to {url}: {str(e)}")
+        return False
+    except requests.exceptions.Timeout as e:
+        print(f"[Ollama] Timeout connecting to {url} (timeout: 5s)")
+        return False
+    except requests.exceptions.RequestException as e:
+        print(f"[Ollama] Request error to {url}: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"[Ollama] Unexpected error checking {url}: {type(e).__name__} - {str(e)}")
         return False
 
 
@@ -17,9 +32,17 @@ def get_ollama_models(url: str = "http://localhost:11434") -> List[Dict]:
         response = requests.get(f"{url}/api/tags", timeout=5)
         if response.status_code == 200:
             data = response.json()
-            return data.get("models", [])
+            models = data.get("models", [])
+            print(f"[Ollama] Found {len(models)} model(s) at {url}")
+            return models
+        else:
+            print(f"[Ollama] Failed to get models: HTTP {response.status_code} from {url}")
+            return []
+    except requests.exceptions.RequestException as e:
+        print(f"[Ollama] Error getting models from {url}: {str(e)}")
         return []
-    except:
+    except Exception as e:
+        print(f"[Ollama] Unexpected error getting models from {url}: {type(e).__name__} - {str(e)}")
         return []
 
 
