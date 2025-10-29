@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 222 47% 11%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 210 20% 95%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 20% 95%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 180 65% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 180 65% 55%;
+
+    --radius: 0.75rem;
+    
+    --timer-active: 180 65% 55%;
+    --timer-paused: 45 93% 58%;
+    --gradient-card: linear-gradient(135deg, hsl(180 65% 55% / 0.05), hsl(220 65% 55% / 0.05));
+    --shadow-elegant: 0 4px 20px -4px hsl(222 47% 11% / 0.08);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 40% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 40% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 217 33% 18%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 18%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 180 65% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 18%;
+    --input: 217 33% 18%;
+    --ring: 180 65% 50%;
+    
+    --timer-active: 180 65% 50%;
+    --timer-paused: 45 93% 58%;
+    --gradient-card: linear-gradient(135deg, hsl(180 65% 50% / 0.08), hsl(220 65% 50% / 0.08));
+    --shadow-elegant: 0 8px 32px -8px hsl(0 0% 0% / 0.3);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro', system-ui, sans-serif;
+  }
+
+  /* Custom Scrollbar Styles */
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 5px;
+    border: 2px solid hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* For thin scrollbars (optional) */
+  ::-webkit-scrollbar-thumb:active {
+    background: hsl(var(--muted-foreground) / 0.7);
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) hsl(var(--background));
+  }
+
+  /* Dark mode scrollbar adjustments */
+  .dark ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.4);
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+}
+
+@layer utilities {
+  .timer-gradient {
+    background: var(--gradient-card);
+  }
+  
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+  
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+  
+  .hover-lift {
+    @apply transition-smooth hover:-translate-y-0.5 hover:shadow-elegant;
+  }
+}

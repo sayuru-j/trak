@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quick Add - TRAK</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        background: transparent;
+        overflow: hidden;
+      }
+
+      .container {
+        width: 420px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        gap: 8px;
+      }
+
+      .dark .container {
+        background: rgba(30, 30, 30, 0.95);
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: 14px;
+        outline: none;
+        color: #333;
+      }
+
+      .dark input {
+        color: #fff;
+      }
+
+      input::placeholder {
+        color: #999;
+      }
+
+      .timer {
+        font-size: 12px;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        color: #666;
+        min-width: 50px;
+        text-align: right;
+      }
+
+      .dark .timer {
+        color: #aaa;
+      }
+
+      .play-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+
+      .play-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .play-btn:active {
+        transform: scale(0.95);
+      }
+
+      .play-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .play-icon {
+        width: 0;
+        height: 0;
+        border-left: 10px solid white;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        margin-left: 2px;
+      }
+
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .close-btn {
+        width: 28px;
+        height: 28px;
+        border: none;
+        background: transparent;
+        color: #999;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        transition: all 0.2s;
+      }
+
+      .close-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #333;
+      }
+
+      .dark .close-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+
+      .ai-badge {
+        width: 4px;
+        height: 4px;
+        background: #667eea;
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+    </style>
+  </head>
+  <body style="position: fixed; bottom: 0; right: 0;">
+    <div class="container">
+      <div class="ai-badge" id="ai-indicator" style="display: none;"></div>
+      <input 
+        type="text" 
+        id="task-input" 
+        placeholder="What are you working on?"
+        autofocus
+      />
+      <span class="timer" id="timer">0:00:00</span>
+      <button class="play-btn" id="play-btn">
+        <div class="play-icon"></div>
+      </button>
+      <button class="close-btn" id="close-btn">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <script>
+      const API_URL = 'http://127.0.0.1:8000';
+      let isProcessing = false;
+      let useAI = false;
+
+      // Check if dark mode
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (isDark) {
+        document.body.classList.add('dark');
+      }
+
+      // Elements
+      const input = document.getElementById('task-input');
+      const playBtn = document.getElementById('play-btn');
+      const closeBtn = document.getElementById('close-btn');
+      const aiIndicator = document.getElementById('ai-indicator');
+
+      // Check AI settings
+      async function checkAI() {
+        try {
+          const response = await fetch(`${API_URL}/settings/use_ai`);
+          const data = await response.json();
+          useAI = data.value === 'true';
+          if (useAI) {
+            aiIndicator.style.display = 'block';
+          }
+        } catch (error) {
+          console.error('Failed to check AI settings:', error);
+        }
+      }
+
+      // Create task (async AI processing)
+      async function createTask() {
+        const taskText = input.value.trim();
+        if (!taskText || isProcessing) return;
+
+        isProcessing = true;
+        playBtn.disabled = true;
+        playBtn.innerHTML = '<div class="spinner"></div>';
+
+        try {
+          // Create task immediately with user input
+          const response = await fetch(`${API_URL}/tasks/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: taskText,
+              description: taskText,
+              category: null,
+              tags: []
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to create task');
+          }
+
+          const createdTask = await response.json();
+
+          // If AI is enabled, process in background (non-blocking)
+          if (useAI) {
+            setTimeout(async () => {
+              try {
+                const settingsResp = await fetch(`${API_URL}/settings/`);
+                const settings = await settingsResp.json();
+                
+                const aiResp = await fetch(`${API_URL}/ai/generate-title`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    description: taskText,
+                    model: settings.ollama_model || 'mistral:7b-instruct-q4_0',
+                    url: settings.ollama_url || 'http://localhost:11434'
+                  })
+                });
+
+                if (aiResp.ok) {
+                  const aiData = await aiResp.json();
+                  const aiTitle = aiData.title.replace(/^["']|["']$/g, '').trim();
+                  
+                  // Update task with AI-generated title
+                  await fetch(`${API_URL}/tasks/${createdTask.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      title: aiTitle,
+                      description: taskText
+                    })
+                  });
+                }
+              } catch (aiError) {
+                console.error('AI enhancement failed (task already created):', aiError);
+              }
+            }, 100);
+          }
+
+          // Close window immediately after task creation
+          setTimeout(() => window.close(), 300);
+        } catch (error) {
+          console.error('Error creating task:', error);
+          alert('Failed to create task');
+          isProcessing = false;
+          playBtn.disabled = false;
+          playBtn.innerHTML = '<div class="play-icon"></div>';
+        }
+      }
+
+      // Event listeners
+      playBtn.addEventListener('click', createTask);
+      closeBtn.addEventListener('click', () => window.close());
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') createTask();
+        if (e.key === 'Escape') window.close();
+      });
+
+      // Initialize
+      checkAI();
+      input.focus();
+    </script>
+  </body>
+</html>
+

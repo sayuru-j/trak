@@ -1,0 +1,79 @@
+{
+  "name": "trak-time-tracker",
+  "version": "1.0.0",
+  "description": "Local time tracking app with AI features",
+  "main": "electron/main.js",
+  "scripts": {
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "electron:dev": "electron . --dev",
+    "electron:prod": "electron .",
+    "dev": "npm run frontend:dev",
+    "start": "npm run electron:dev",
+    "build": "npm run frontend:build",
+    "dist": "npm run build && npx electron-builder",
+    "dist:win": "npm run build && npx electron-builder --win",
+    "dist:mac": "npm run build && npx electron-builder --mac",
+    "dist:linux": "npm run build && npx electron-builder --linux"
+  },
+  "keywords": ["electron", "time-tracker", "ai"],
+  "author": "TRAK Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "cross-spawn": "^7.0.3"
+  },
+  "build": {
+    "appId": "com.trak.timetracker",
+    "productName": "TRAK",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "frontend/dist/**/*",
+      "backend/**/*",
+      "!backend/__pycache__",
+      "!backend/*.db",
+      "!backend/venv",
+      "!backend/**/*.pyc",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "backend",
+        "to": "backend",
+        "filter": ["**/*", "!__pycache__", "!*.db", "!venv", "!**/*.pyc"]
+      }
+    ],
+    "asarUnpack": [
+      "frontend/dist/**/*"
+    ],
+    "win": {
+      "target": ["nsis", "portable"],
+      "signAndEditExecutable": false,
+      "icon": "build/icon.png"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "icon": "build/icon.png",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "build/icon.png",
+      "category": "Office"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
+
